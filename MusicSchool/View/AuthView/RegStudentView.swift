@@ -13,6 +13,13 @@ struct RegStudentView: View {
     @State private var LastName: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
+    @State private var isRegistered: Bool = false
+    
+    @State private var showAlert: Bool = false
+    @State private var title: String = ""
+    @State private var message: String = ""
+    
+    @ObservedObject private var viewModel = AuthViewModel()
     
     // Condition Variable
     @FocusState private var isFocused: Bool
@@ -20,7 +27,7 @@ struct RegStudentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Text("Teacher Register")
+                Text("Student Register")
                     .padding()
                     .font(.title)
                     .fontWeight(.bold)
@@ -29,7 +36,7 @@ struct RegStudentView: View {
                 HStack {
                     TextField("First Name:",text: $FirstName)
                         .autocorrectionDisabled()
-                        .textContentType(.name)
+                        .textContentType(.givenName)
                     
                         .padding()
                         .background(Color(.systemGray6))
@@ -38,7 +45,7 @@ struct RegStudentView: View {
                     
                     TextField("Last Name:", text: $LastName)
                         .autocorrectionDisabled()
-                        .textContentType(.name)
+                        .textContentType(.familyName)
                     
                         .padding()
                         .background(Color(.systemGray6))
@@ -72,17 +79,27 @@ struct RegStudentView: View {
                     .focused($isFocused)
                 
                 // MARK: Register Button
-                NavigationLink(destination: LaunchView()) {
-                    Text("Register")
-                    .padding()
-                    .padding(.horizontal, 13)
-                    .background(Color(.green))
-                    .foregroundColor(.white)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .cornerRadius(8)
-                    .frame(width: 180)
+                NavigationLink(destination: LaunchView(), isActive: $isRegistered) {
+                    Button {
+                        Task {
+                            (isRegistered, title, message) = try await viewModel.RegStudent(first: FirstName, last: LastName, email: email, password: password)
+                            showAlert = true
+                        }
+                    } label: {
+                        Text("Register")
+                            .padding()
+                            .padding(.horizontal, 13)
+                            .background(Color(.green))
+                            .foregroundColor(.white)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .cornerRadius(8)
+                            .frame(width: 180)
+                    }
                 }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text(title), message: Text(message), dismissButton: .default(Text("OK")))
             }
         }
     }

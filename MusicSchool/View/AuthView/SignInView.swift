@@ -6,14 +6,24 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct SignInView: View {
+    // View Model
+    @StateObject private var viewModel = AuthViewModel()
+    
     // Credentials Variable
     @State private var email: String = ""
     @State private var password: String = ""
     
     // Condition Variable
     @FocusState private var isFocused: Bool
+    @State private var isCorrect: Bool = false
+    
+    // Alert variable
+    @State private var showAlert: Bool = false
+    @State private var alertTitle: String = ""
+    @State private var alertMessage: String = ""
     
     var body: some View {
         NavigationStack {
@@ -46,8 +56,15 @@ struct SignInView: View {
                     .padding(.horizontal, 14)
                     .focused($isFocused)
                 
-                NavigationLink(destination: MainMenuView()) {
-                    Text("Sign In")
+                NavigationLink(destination: MainMenuView(), isActive: $isCorrect) {
+                    Button("Sign In") {
+                        Task {
+                            (showAlert, alertTitle, alertMessage) = try await viewModel.SignIn(email: email, password: password)
+                            if showAlert == false {
+                                isCorrect = true
+                            }
+                        }
+                    }
                     .padding()
                     .padding(.horizontal, 13)
                     .background(Color(.orange))
@@ -64,10 +81,12 @@ struct SignInView: View {
                         .font(.subheadline)
                         .foregroundColor(.indigo)
                 }
-                    
             }
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+            }
+            
         }
-        .padding()
     }
 }
 

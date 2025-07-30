@@ -10,6 +10,7 @@ import SwiftUI
 struct RegTeacherView: View {
     
     // Credentials Variable
+    @ObservedObject private var viewModel = AuthViewModel()
     @State private var FirstName: String = ""
     @State private var LastName: String = ""
     @State private var email: String = ""
@@ -18,6 +19,12 @@ struct RegTeacherView: View {
     
     // Condition Variable
     @FocusState private var isFocused: Bool
+    @State private var isRegisterd: Bool = false
+    
+    // Alert
+    @State private var showAlert: Bool = false
+    @State private var AlertTitle: String = ""
+    @State private var AlertMessage: String = ""
     
     var body: some View {
         NavigationStack {
@@ -31,7 +38,7 @@ struct RegTeacherView: View {
                 HStack {
                     TextField("First Name:",text: $FirstName)
                         .autocorrectionDisabled()
-                        .textContentType(.name)
+                        .textContentType(.givenName)
                     
                         .padding()
                         .background(Color(.systemGray6))
@@ -40,7 +47,7 @@ struct RegTeacherView: View {
                     
                     TextField("Last Name:", text: $LastName)
                         .autocorrectionDisabled()
-                        .textContentType(.name)
+                        .textContentType(.familyName)
                     
                         .padding()
                         .background(Color(.systemGray6))
@@ -84,8 +91,14 @@ struct RegTeacherView: View {
                     .focused($isFocused)
                 
                 //MARK: Register Button
-                NavigationLink(destination: LaunchView()) {
-                    Text("Register")
+                // TODO: Documentation
+                NavigationLink(destination: LaunchView(), isActive: $isRegisterd) {
+                    Button("Register") {
+                        Task {
+                            (isRegisterd, AlertTitle, AlertMessage) = try await viewModel.RegTeacher(first: FirstName, last: LastName, email: email, password: password, code: code)
+                            showAlert = true
+                        }
+                    }
                     .padding()
                     .padding(.horizontal, 13)
                     .background(Color(.green))
@@ -96,6 +109,11 @@ struct RegTeacherView: View {
                     .frame(width: 180)
                 }
             }
+        }
+        // TODO: Documentation
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(AlertTitle), message: Text(AlertMessage), dismissButton: .default(Text("OK")))
+            
         }
     }
 }

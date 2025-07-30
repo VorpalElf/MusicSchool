@@ -25,31 +25,33 @@ struct LaunchView: View {
                 // Sign In View Button
                 NavigationLink(destination: SignInView()) {
                     Text("Sign In")
-                    .padding()
-                    .padding(.horizontal, 13)
-                    .background(Color(.orange))
-                    .foregroundColor(.white)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .cornerRadius(8)
-                    .frame(width: 180)
+                        .padding()
+                        .padding(.horizontal, 13)
+                        .background(Color(.orange))
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .cornerRadius(8)
+                        .frame(width: 180)
                 }
                 
                 // Register View Button
                 NavigationLink(destination: RegisterView()) {
                     Text("Register")
-                    .padding()
-                    .padding(.horizontal, 13)
-                    .background(Color(.blue))
-                    .foregroundColor(.white)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .cornerRadius(8)
-                    .frame(width: 180)
+                        .padding()
+                        .padding(.horizontal, 13)
+                        .background(Color(.blue))
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .cornerRadius(8)
+                        .frame(width: 180)
                 }
             }
+            .padding()
+            .frame(maxWidth: 400, alignment: .center)
+            .navigationBarBackButtonHidden()
         }
-        .padding()
     }
 }
 
