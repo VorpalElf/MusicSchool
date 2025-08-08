@@ -110,7 +110,6 @@ struct RegTeacherView: View {
                 }
             }
         }
-        // TODO: Documentation
         .alert(isPresented: $showAlert) {
             Alert(title: Text(AlertTitle), message: Text(AlertMessage), dismissButton: .default(Text("OK")))
             

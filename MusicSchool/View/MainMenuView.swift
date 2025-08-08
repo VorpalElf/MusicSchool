@@ -31,6 +31,11 @@ struct MainMenuView: View {
         }
         .navigationBarBackButtonHidden()
         .toolbar {
+            NavigationLink(destination: SettingsMenuView()) {
+                Image(systemName: "gear")
+                    .foregroundStyle(.blue)
+            }
+            
             NavigationLink(destination: LaunchView(), isActive: $signedOut) {
                 Button {
                     (signedOut, showAlert, alertMessage) = viewModel.SignOut()

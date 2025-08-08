@@ -198,7 +198,6 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    // TODO: Fetch Username function
     func fetchUsername() async throws -> String {
         guard let user = Auth.auth().currentUser else {
             return "Error"
@@ -222,5 +221,4 @@ class AuthViewModel: ObservableObject {
             return ("Error")
         }
     }
-    
 }
