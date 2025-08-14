@@ -221,4 +221,53 @@ class AuthViewModel: ObservableObject {
             return ("Error")
         }
     }
+    
+    func checkTeacher() async throws -> (isTeacher: Bool, showAlert: Bool, msg: String) {
+        guard let user = Auth.auth().currentUser else {
+            return (false, true, "Error")
+        }
+        
+        let uid = user.uid
+        let usersRef = db.collection("Users").document(uid)
+        
+        do {
+            let document = try await usersRef.getDocument()
+            if document.exists {
+                if let role = document.data()?["Role"] as? String {
+                    if role == "Teacher" {
+                        return (true, false, "")
+                    } else {
+                        return (false, true, "Teacher Access Only")
+                    }
+                } else {
+                    return (false, true, "Error")
+                }
+            } else {
+                return (false, true, "User Not Found")
+            }
+        } catch {
+            return (false, true, error.localizedDescription)
+        }
+    }
+    
+    func fetchOtherUser(uid: String) async throws -> (first: String, last: String) {
+        
+        let usersRef = db.collection("Users").document(uid)
+        
+        do {
+            let document = try await usersRef.getDocument()
+            if document.exists {
+                if let storedFirst = document.data()?["firstName"] as? String, let storedLast = document.data()?["lastName"] as? String{
+                    return (storedFirst, storedLast)
+                } else {
+                    return ("Error", "Error")
+                }
+            } else {
+                return ("Error", "Error")
+            }
+        } catch {
+            return ("Error", "Error")
+        }
+    }
+
 }

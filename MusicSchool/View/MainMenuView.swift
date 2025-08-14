@@ -25,7 +25,20 @@ struct MainMenuView: View {
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .padding()
                 
-                Spacer ()
+                Spacer()
+                
+                NavigationLink(destination: TimeMenuView()) {
+                    Text("Timetable")
+                        .padding()
+                        .padding(.horizontal, 5)
+                        .background(Color(.orange))
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .cornerRadius(8)
+                }
+                
+                Spacer()
                 
             }
         }
