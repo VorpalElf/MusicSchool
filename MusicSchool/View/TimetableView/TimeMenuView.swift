@@ -10,6 +10,8 @@ import SwiftUI
 struct TimeMenuView: View {
     @ObservedObject private var viewModel = AuthViewModel()
     @State private var isTeacher: Bool = false
+    @State private var isSearch: Bool = false
+    @State private var isGen: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     
@@ -31,10 +33,14 @@ struct TimeMenuView: View {
                     .cornerRadius(8)
             }
             
-            NavigationLink(destination: TimeSearchView(), isActive: $isTeacher) {
+            NavigationLink(destination: TimeSearchView(), isActive: $isSearch) {
                 Button {
                     Task {
-                        (isTeacher, showAlert, alertMessage) = try await viewModel.checkTeacher()
+                        let uid = viewModel.fetchUID()
+                        (isTeacher, showAlert, alertMessage) = try await viewModel.checkTeacher(uid: uid)
+                        if isTeacher {
+                            isSearch = true
+                        }
                     }
                 } label: {
                     Text("Other's Timetable")
@@ -48,10 +54,14 @@ struct TimeMenuView: View {
                 }
             }
             
-            NavigationLink(destination: GenTimeView(), isActive: $isTeacher) {
+            NavigationLink(destination: GenTimeView(), isActive: $isGen) {
                 Button {
                     Task {
-                        (isTeacher, showAlert, alertMessage) = try await viewModel.checkTeacher()
+                        let uid = viewModel.fetchUID()
+                        (isTeacher, showAlert, alertMessage) = try await viewModel.checkTeacher(uid: uid)
+                        if isTeacher {
+                            isGen = true
+                        }
                     }
                 } label: {
                     Text("Generate Timetable")

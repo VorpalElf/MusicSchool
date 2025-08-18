@@ -8,8 +8,48 @@
 import SwiftUI
 
 struct TimeSearchView: View {
+    @ObservedObject private var viewModel = TimetableViewModel()
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var users: [(uid: String, name: String)] = []
+    @State private var searchText: String = ""
+    
+    var filteredNames: [(uid: String, name: String)] {
+        if searchText.isEmpty {
+            return users
+        } else {
+            return users.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+        }
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("Other Students")
+                .font(.title)
+                .fontWeight(.bold)
+                .padding()
+                .frame(alignment: .leading)
+            
+            List {
+                ForEach(filteredNames, id: \.uid) { user in
+                    NavigationLink(destination: OtherTimeView(uid: user.uid)) {
+                        Text(user.name)
+                            .onAppear() {
+                                print(user.uid)
+                            }
+                    }
+                }
+            }
+            .searchable(text: $searchText, prompt: "Search name here")
+        }
+        .onAppear() {
+            Task {
+                (users, showAlert, alertMessage) = try await viewModel.fetchAllNames()
+            }
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
     }
 }
 

@@ -222,12 +222,8 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func checkTeacher() async throws -> (isTeacher: Bool, showAlert: Bool, msg: String) {
-        guard let user = Auth.auth().currentUser else {
-            return (false, true, "Error")
-        }
+    func checkTeacher(uid: String) async throws -> (isTeacher: Bool, showAlert: Bool, msg: String) {
         
-        let uid = user.uid
         let usersRef = db.collection("Users").document(uid)
         
         do {
@@ -268,6 +264,10 @@ class AuthViewModel: ObservableObject {
         } catch {
             return ("Error", "Error")
         }
+    }
+    
+    func fetchUID() -> String {
+        return Auth.auth().currentUser!.uid
     }
 
 }
