@@ -141,4 +141,8 @@ class TimetableViewModel: ObservableObject {
         return (names, false, "")
     }
     
+    // MARK: - Return Selected Week
+    func fetchSelectedWeek() async throws -> Date {
+        return selectedWeek
+    }
 }

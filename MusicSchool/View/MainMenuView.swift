@@ -38,6 +38,17 @@ struct MainMenuView: View {
                         .cornerRadius(8)
                 }
                 
+                NavigationLink(destination: ConMenuView()) {
+                    Text("Constraints")
+                        .padding()
+                        .padding(.horizontal, 5)
+                        .background(Color(.green))
+                        .foregroundColor(.white)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .cornerRadius(8)
+                }
+                
                 Spacer()
                 
             }

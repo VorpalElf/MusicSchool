@@ -21,6 +21,13 @@ struct MyTimeView: View {
     @State var color: Color = Color(.green)
     @State private var result: String = ""
     
+    // Colour Scheme for Dark Mode
+    @Environment(\.colorScheme) var borderColourScheme
+    
+    var contrastColour: Color {
+        borderColourScheme == .dark ? .white: .black
+    }
+    
     // Array for Day
     let day = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     
@@ -119,7 +126,7 @@ struct MyTimeView: View {
                                     Text(lesson.name)
                                         .frame(minWidth: 150)
                                         .padding(5)
-                                        .border(Color.black, width: 1)
+                                        .border(contrastColour, width: 1)
                                         .background(lesson.color)
                                 }
                             }
