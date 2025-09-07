@@ -117,29 +117,6 @@ class TimetableViewModel: ObservableObject {
         return Lesson(name: result, color: Color(.orange))
     }
     
-    // MARK: - Search
-    
-    func fetchAllNames() async throws -> (names: [(uid: String, name: String)], showAlert: Bool, alertMsg: String) {
-        var names: [(uid: String, name: String)] = [] // [ID:Name]
-        
-        let usersRef = db.collection("Users")
-        
-        do {
-            let querySnapshot = try await usersRef.getDocuments()
-            for document in querySnapshot.documents {
-                let uid = document.documentID
-                guard let first = document.get("firstName") as?String,
-                      let last = document.get("lastName") else {
-                          return ([], true, "Error fetching names")
-                      }
-                let name = "\(first) \(last)"
-                names.append((uid: uid, name: name))
-            }
-        } catch {
-            return ([], true, error.localizedDescription)
-        }
-        return (names, false, "")
-    }
     
     // MARK: - Return Selected Week
     func fetchSelectedWeek() async throws -> Date {

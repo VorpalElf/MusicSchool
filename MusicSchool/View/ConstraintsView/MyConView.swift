@@ -11,10 +11,8 @@ import FirebaseAuth
 
 struct MyConView: View {
     @ObservedObject private var viewModel = ConViewModel()
-    @State private var currentWeek: Date = Date()
-    @State private var showPicker: Bool = false
-    @State private var tempPickedDate: Date = Date()    // Date picked in the calendar
     @State private var uid: String = ""
+    @State private var tempFullDay: Bool = false
     
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -63,11 +61,36 @@ struct MyConView: View {
                         
                         ForEach(day, id: \.self) { day in
                             LazyVGrid(columns: [GridItem(.fixed(CGFloat(time.count)))]) {
-                                Text(day)
-                                    .frame(minWidth: 150)
-                                    .padding(10)
-                                    .background(Color(.gray))
-                                    .cornerRadius(5)
+                                HStack {
+                                    Text(day)
+                                        .padding(5)
+                                        
+                                    if viewModel.selectionMode != nil {
+                                        let cond = viewModel.fullDayCons(day: day, times: time)
+                                        Image(systemName: cond ? "checkmark.circle.fill": "circle")
+                                            .foregroundColor(.blue)
+                                            .padding(5)
+                                    }
+                                }
+                                .frame(minWidth: 150)
+                                .padding(.leading, 10)
+                                .padding(.trailing, 10)
+                                .padding(.top, 5)
+                                .padding(.bottom, 5)
+                                .background(Color(.gray))
+                                .cornerRadius(5)
+                                
+                                .onTapGesture {
+                                    if viewModel.selectionMode != nil {
+                                        let cond = viewModel.fullDayCons(day: day, times: time)
+                                        for t in time {
+                                            let key = "\(day)_\(t)"
+                                            if viewModel.selectedCells.contains(key) == cond {
+                                                viewModel.toggleSelection(for: key)
+                                            }
+                                        }
+                                    }
+                                }
                                 
                                 ForEach(time, id: \.self) { time in
                                     let (key, constraintColour) = viewModel.fetchCons(day: day, time: time)

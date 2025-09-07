@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TimeSearchView: View {
-    @ObservedObject private var viewModel = TimetableViewModel()
+    @ObservedObject private var viewModel = AuthViewModel()
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     @State private var users: [(uid: String, name: String)] = []
@@ -24,7 +24,7 @@ struct TimeSearchView: View {
     
     var body: some View {
         VStack {
-            Text("Other Students")
+            Text("Others' Time")
                 .font(.title)
                 .fontWeight(.bold)
                 .padding()

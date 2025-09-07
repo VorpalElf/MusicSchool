@@ -77,6 +77,23 @@ class ConViewModel: ObservableObject {
         return (key, result.colour)
     }
     
+    // Full Day Constraints
+    func fullDayCons(day: String, times: [String]) -> Bool {
+        for time in times {
+            let key = "\(day)_\(time)"
+            
+            guard selectedCells.contains(key) else {
+                return false
+            }
+        }
+        return true
+    }
+    
+    // Change Full Day Constraints
+    func changeFullDay(key: String, cond: Bool) {
+        
+    }
+    
     // MARK: - Apply Constraints
     enum SelectionMode {
         case avoid, prefer, free

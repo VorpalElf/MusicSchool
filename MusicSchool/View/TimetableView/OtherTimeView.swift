@@ -19,9 +19,11 @@ struct OtherTimeView: View {
                 "14:00", "14:30", "15:00", "15:30", "16:00"]
     
     @ObservedObject private var viewModel = TimetableViewModel()
+    @ObservedObject private var authModel = AuthViewModel()
     @State private var currentWeek: Date = Date()
     @State private var showPicker: Bool = false
     @State private var tempPickedDate: Date = Date()    // Date picked in the calendar
+    @State private var username: String = ""
     
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -30,7 +32,7 @@ struct OtherTimeView: View {
     
     var body: some View {
         VStack {
-            Text("My Timetable")
+            Text("\(username)'s Timetable")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
@@ -140,6 +142,7 @@ struct OtherTimeView: View {
         // When screen initialised
         .onAppear() {
             Task {
+                (username, _) = try await authModel.fetchOtherUser(uid: uid)
                 (showAlert, alertMessage) = try await viewModel.fetchDocument(uid: uid)
             }
         }
