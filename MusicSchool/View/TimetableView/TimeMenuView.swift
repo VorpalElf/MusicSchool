@@ -54,7 +54,7 @@ struct TimeMenuView: View {
                 }
             }
             
-            NavigationLink(destination: GenTimeView(), isActive: $isGen) {
+            NavigationLink(destination: GenClassView(), isActive: $isGen) {
                 Button {
                     Task {
                         let uid = viewModel.fetchUID()

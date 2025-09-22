@@ -19,10 +19,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct MusicSchoolApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject private var viewModel = GenViewModel()
     
     var body: some Scene {
         WindowGroup {
             LaunchView()
+                .environmentObject(viewModel)
         }
     }
 }
