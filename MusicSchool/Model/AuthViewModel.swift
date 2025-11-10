@@ -82,8 +82,16 @@ class AuthViewModel: ObservableObject {
             try await self.db.collection("Users").document(uid).setData([
                 "firstName": first,
                 "lastName": last,
-                "Role": "Teacher"
+                "Role": "Teacher",
+                "userLock": false
             ])
+        } catch {
+            return (false, "Error", error.localizedDescription)
+        }
+        
+        // Delete Verification Code
+        do {
+            try await self.db.collection("verificationCodes").document(code).delete()
             return (true, "Success", "Account registered successfully!")
         } catch {
             return (false, "Error", error.localizedDescription)
@@ -146,7 +154,8 @@ class AuthViewModel: ObservableObject {
             try await self.db.collection("Users").document(uid).setData([
                 "firstName": first,
                 "lastName": last,
-                "Role": "Student"
+                "Role": "Student",
+                "userLock": false
             ])
             return (true, "Success", "Account registered successfully!")
         } catch {
@@ -297,4 +306,28 @@ class AuthViewModel: ObservableObject {
         return (names, false, "")
     }
     
+    func fetchAllStudents() async throws -> (names: [(uid: String, name: String)], showAlert: Bool, alertMsg: String) {
+        var names: [(uid: String, name: String)] = [] // [ID:Name]
+        
+        let usersRef = db.collection("Users").whereField("Role", isEqualTo: "Student")
+        
+        do {
+            let querySnapshot = try await usersRef.getDocuments()
+            for document in querySnapshot.documents {
+                let uid = document.documentID
+                guard let first = document.get("firstName") as?String,
+                      let last = document.get("lastName") else {
+                          return ([], true, "Error fetching names")
+                      }
+                let name = "\(first) \(last)"
+                let my_uid = fetchUID()
+                if uid != my_uid {
+                    names.append((uid: uid, name: name))
+                }
+            }
+        } catch {
+            return ([], true, error.localizedDescription)
+        }
+        return (names, false, "")
+    }
 }

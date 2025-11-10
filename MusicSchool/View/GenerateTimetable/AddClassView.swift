@@ -82,7 +82,7 @@ struct AddClassView: View {
                     Text("Duration: ")
                     
                     Picker("Hours", selection: $durHours) {
-                        ForEach(0..<11) { h in
+                        ForEach(0..<10) { h in
                             Text("\(h)")
                         }
                     }
@@ -103,10 +103,10 @@ struct AddClassView: View {
                 // MARK: - List of Students
                 List {
                     ForEach(filteredNames, id: \.uid) { user in
-                        let isSelected = viewModel.checkContainUser(pupil: user.name)
+                        let isSelected = viewModel.checkContainUser(pupil: user.uid)
                         
                         Button {
-                            viewModel.toggleSelection(pupil: user.name)
+                            viewModel.toggleSelection(uid: user.uid)
                         } label: {
                             HStack {
                                 Text(user.name)
@@ -128,7 +128,7 @@ struct AddClassView: View {
         // MARK: - Others
         .onAppear() {
             Task {
-                (users, showAlert, alertMessage) = try await authModel.fetchAllNames()
+                (users, showAlert, alertMessage) = try await authModel.fetchAllStudents()
                 if classID != "" {
                     // Update Pupil List
                     viewModel.updatePupilList(classID: classID)

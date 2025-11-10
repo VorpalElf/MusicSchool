@@ -63,7 +63,6 @@ class ConViewModel: ObservableObject {
         } catch {
             return (true, error.localizedDescription)
         }
-        print(conColour)
         return (false, "")
     }
     
@@ -89,9 +88,28 @@ class ConViewModel: ObservableObject {
         return true
     }
     
-    // Change Full Day Constraints
-    func changeFullDay(key: String, cond: Bool) {
-        
+    // Fetch Constraint Number
+    func fetchConstraintNumber(uid: String) async -> [String] {
+        do {
+            let db = Firestore.firestore()
+            let querySnapshot = try await db.collection("Constraints")
+                .whereField("Status", isEqualTo: "Avoid")
+                .whereField("userID", isEqualTo: uid)
+                .getDocuments()
+            
+            var ans: [String] = []
+            
+            for document in querySnapshot.documents {
+                guard let day = document.get("Day") as? String,
+                      let time = document.get("Time") as? String else { continue }
+                let key = "\(day)_\(time)"
+                ans.append(key)
+            }
+            return ans
+        } catch {
+            print("Fetch Constraint Error: \(error.localizedDescription)")
+            return []
+        }
     }
     
     // MARK: - Apply Constraints
@@ -110,6 +128,13 @@ class ConViewModel: ObservableObject {
     func applyCons(mode: SelectionMode) async throws -> (showAlert: Bool, msg: String) {
         var status: String = ""
         let uid = viewModel.fetchUID()
+        let GenView = GenViewModel()
+        let AuthView = AuthViewModel()
+        let userLock = await GenView.fetchUserLock(uid: AuthView.fetchUID())
+        
+        if userLock == true {
+            return (true, "User Locked")
+        }
         
         // Convert mode to string
         if mode == .avoid {
