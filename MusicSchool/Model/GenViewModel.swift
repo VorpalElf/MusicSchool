@@ -110,6 +110,12 @@ class GenViewModel: ObservableObject {
         if showAlert == true {
             return (showAlert, alertMsg)
         }
+
+        defer {
+            Task {
+                _ = await self.toggleUserLock(uid: currentUID, cond: false)
+                }
+            }
         
         // MARK: 1. Fetch List & Clean Data
         // 1.1 Fetch Teacher Constraints List
